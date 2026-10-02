@@ -167,3 +167,13 @@
   flex: none;
   cursor: pointer;
 }
+
+.mdlx-footer {
+  margin: 0;
+  text-align: right;
+  font-size: 12px;
+}
+
+.mdlx-footer a {
+  color: #2b6cb0;
+}

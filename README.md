@@ -1,6 +1,7 @@
 # Media Downloader
 
 [![CI](https://github.com/marcfs31/media-downloader/actions/workflows/ci.yml/badge.svg)](https://github.com/marcfs31/media-downloader/actions/workflows/ci.yml)
+[![Support · 1,99 €](https://img.shields.io/badge/Support-1%2C99_%E2%82%AC-2f855a)](https://marcfors.com/donate?from=media-downloader)
 
 Two cooperating pieces for saving media you can already access in your browser:
 
@@ -213,3 +214,5 @@ came with it.
 All rights reserved — see [LICENSE](LICENSE). The source is public here for
 transparency, but it isn't licensed for reuse, modification, or
 redistribution without permission.
+
+If this project is useful to you, you can [support it with 1,99 €](https://marcfors.com/donate?from=media-downloader).
