@@ -111,8 +111,11 @@ def register_windows(browser: str, manifest_path: Path) -> None:
 
 def install(browser: str, chrome_extension_id: str | None) -> Path:
     target_dir = manifest_dir(browser)
+    # Not beside the manifest: macOS privacy-protects browser data folders, so a
+    # launcher there fails with "Operation not permitted" when the browser runs
+    # it. The environment itself is already readable by whatever runs the host.
     launcher = write_launcher(
-        target_dir if platform.system() == "Windows" else target_dir.parent / "MediaDownloaderHost"
+        target_dir if platform.system() == "Windows" else Path(sys.prefix) / "native-messaging"
     )
     manifest = build_manifest(browser, launcher, chrome_extension_id)
 
