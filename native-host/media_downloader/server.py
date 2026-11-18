@@ -190,7 +190,7 @@ def _sweep_loop(dest: Path, keep_days: float) -> None:
     while True:
         removed = sweep_old_files(dest, keep_days)
         for path in removed:
-            print(f"cleanup: removed {path.name} (older than {keep_days:g} days)")
+            print(f"cleanup: removed {path.name} (older than {keep_days:g} days)", flush=True)
         time.sleep(3600)
 
 
@@ -776,7 +776,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.keep_days > 0:
         print(f"  Auto-cleanup:     files older than {args.keep_days:g} day(s) are deleted hourly")
         threading.Thread(target=_sweep_loop, args=(args.dest, args.keep_days), daemon=True).start()
-    print("Press Ctrl-C to stop.")
+    # Block-buffered when piped (a service log, `| tee`), so the token would otherwise
+    # sit unseen until exit.
+    print("Press Ctrl-C to stop.", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
