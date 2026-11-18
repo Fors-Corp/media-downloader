@@ -527,3 +527,47 @@ class TestServeFileWithUnicodeFilename:
         status, content = get(running_server, f"/files/{job_id}")
         assert status == 200
         assert content == b"video bytes"
+
+
+class TestStartupBanner:
+    def test_url_reaches_a_piped_stdout_while_serving(self, tmp_path: Path) -> None:
+        import queue
+        import subprocess
+        import sys
+
+        proc = subprocess.Popen(
+            [
+                sys.executable,
+                "-m",
+                "media_downloader.server",
+                "--http",
+                "--host",
+                "127.0.0.1",
+                "--port",
+                "0",
+                "-d",
+                str(tmp_path),
+                "--token",
+                "pipetoken",
+            ],
+            stdout=subprocess.PIPE,
+            text=True,
+        )
+        lines: queue.Queue[str] = queue.Queue()
+        assert proc.stdout is not None
+        stdout = proc.stdout
+        threading.Thread(target=lambda: [lines.put(line) for line in stdout], daemon=True).start()
+        seen: list[str] = []
+        try:
+            deadline = time.monotonic() + 10
+            while not any("Press Ctrl-C" in line for line in seen):
+                remaining = deadline - time.monotonic()
+                assert remaining > 0, f"banner never reached the pipe; got {seen!r}"
+                try:
+                    seen.append(lines.get(timeout=remaining))
+                except queue.Empty:
+                    continue
+        finally:
+            proc.terminate()
+            proc.wait(timeout=10)
+        assert any("?t=pipetoken" in line for line in seen)
